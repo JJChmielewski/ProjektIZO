@@ -1,4 +1,3 @@
-using IZO.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +21,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-ExpenseAccesorService.loadExpenses();
 
 app.Run();

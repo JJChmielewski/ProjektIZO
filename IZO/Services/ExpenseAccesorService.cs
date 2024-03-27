@@ -1,6 +1,4 @@
 ﻿using IZO.Models.Expenses;
-using System;
-using System.IO;
 using System.Text.Json;
 
 namespace IZO.Services
@@ -8,7 +6,7 @@ namespace IZO.Services
     public static class ExpenseAccesorService
     {
         public static string pathToSavedDir = "saved/";
-        public static MonthlyExpenses monthlyExpenses;
+        public static MonthlyExpenses monthlyExpenses = loadExpenses(getCurrentFilePath());
 
         public static void saveExpenses()
         {
@@ -17,28 +15,17 @@ namespace IZO.Services
                 Directory.CreateDirectory(pathToSavedDir);
             }
 
-            if (!File.Exists(file))
+            using (StreamWriter sw = File.CreateText(file))
             {
-                // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(file))
-                {
-                    sw.Write(JsonSerializer.Serialize(monthlyExpenses));
-                }
-                return;
-            }
-
-            using (StreamWriter outputFile = new StreamWriter(getCurrentFilePath(), false))
-            {
-                outputFile.Write(JsonSerializer.Serialize(monthlyExpenses));
+                sw.Write(JsonSerializer.Serialize(monthlyExpenses));
             }
         }
 
-        public static void loadExpenses()
+        public static MonthlyExpenses loadExpenses(string file)
         {
-            string file = getCurrentFilePath();
+            MonthlyExpenses? tempExpenses;
             if (File.Exists(file))
             {
-                MonthlyExpenses? tempExpenses;
                 using (FileStream openStream = File.OpenRead(file))
                 {
                     tempExpenses = JsonSerializer.Deserialize<MonthlyExpenses>(openStream);
@@ -46,13 +33,13 @@ namespace IZO.Services
 
                 if (tempExpenses != null)
                 {
-                    monthlyExpenses = tempExpenses;
-                    return;
+                    return tempExpenses;
                 }
             }
 
-            monthlyExpenses = new MonthlyExpenses();
-            saveExpenses();
+            tempExpenses = new MonthlyExpenses();
+            tempExpenses.fixedExpenses = getPastFixedExpenses();
+            return tempExpenses;
         }
 
         private static string getCurrentFilePath()
@@ -60,6 +47,45 @@ namespace IZO.Services
             string year = DateTime.Now.Year.ToString();
             string month = DateTime.Now.Month.ToString();
             return Path.Combine(pathToSavedDir, String.Format("{0}-{1}.json", month, year));
+        }
+
+        private static Dictionary<ExpenseCategory, Expense> getPastFixedExpenses()
+        {
+            if (Directory.Exists(pathToSavedDir))
+            {
+                string[] files = Directory.GetFiles(pathToSavedDir);
+                string newest = null;
+
+                foreach (string file in files)
+                {
+                    if (!file.Contains(".json"))
+                    {
+                        continue;
+                    }
+
+                    if (newest == null)
+                    {
+                        newest = file;
+                        continue;
+                    }
+
+                    string[] fileSplit = file.Replace(".json", "").Replace(pathToSavedDir,"").Split('-');
+                    string[] newestSplit = newest.Replace(".json", "").Replace(pathToSavedDir, "").Split('-');
+                    
+                    if (int.Parse(fileSplit[1]) > int.Parse(newestSplit[1]) || 
+                        (int.Parse(fileSplit[1]) == int.Parse(newestSplit[1]) && int.Parse(fileSplit[0]) > int.Parse(newestSplit[0])))
+                    {
+                        newest = file;
+                    }
+                }
+
+                if (newest != null)
+                {
+                    return loadExpenses(newest).fixedExpenses;
+                }
+            }
+
+            return new Dictionary<ExpenseCategory, Expense>();
         }
 
     }
