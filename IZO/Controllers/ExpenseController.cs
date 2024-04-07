@@ -17,7 +17,7 @@ namespace IZO.Controllers
         [HttpPost]
         public IActionResult AddExpense(DateTime date, string category, double value)
         {
-            // The add expense logic now resides here.
+            // The add expense logic now resides here...
             if (Enum.TryParse(category, out ExpenseCategory expenseCategory))
             {
                 var newExpense = new Expense
@@ -29,7 +29,7 @@ namespace IZO.Controllers
 
                 _logger.LogInformation($"New expense added: {newExpense}");
 
-                // Add expense to the data store...
+                // Add expense to the data store....
 
                 return Json(new { success = true });
             }

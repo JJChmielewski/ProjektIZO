@@ -5,6 +5,7 @@ using System.Diagnostics;
 
 namespace IZO.Controllers
 {
+    //main controller
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
