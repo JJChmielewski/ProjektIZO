@@ -1,5 +1,7 @@
 ﻿using IZO.Models;
+using IZO.Models.Charts;
 using IZO.Models.Expenses;
+using IZO.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -17,8 +19,15 @@ namespace IZO.Controllers
 
         public IActionResult Index()
         {
-            var monthlyExpenses = MonthlyExpenses.GetMockData();
-            return View(monthlyExpenses);
+            // Fetch the mock data for both MonthlyExpenses and ExpensePieChart
+            var viewModel = new ExpensesViewModel
+            {
+                MonthlyExpenses = MonthlyExpenses.GetMockData(),
+                ExpensePieChart = ExpensePieChart.GetMockData()
+            };
+
+            // Pass the ViewModel to the view
+            return View(viewModel);
         }
 
         public IActionResult Privacy()

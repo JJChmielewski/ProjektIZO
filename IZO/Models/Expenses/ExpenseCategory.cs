@@ -2,6 +2,14 @@
 {
     public enum ExpenseCategory
     {
-        MISC, HOUSING, UTILITIES, TRAVEL, CLOTHES, GROCERIES, HEALTH, GASTRONOMY, ENTERTAINMENT, TRANSIT
+        MISC,          
+        HOUSING,        
+        UTILITIES,
+        TRAVEL, 
+        CLOTHES, 
+        GROCERIES, 
+        HEALTH, 
+        GASTRONOMY, 
+        ENTERTAINMENT, 
     }
 }

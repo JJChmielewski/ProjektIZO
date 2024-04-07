@@ -261,7 +261,16 @@ d2d-expenses-table {
 .expenses-chart {
     background-color: #1c1c1c;
     border-radius: 10px;
+    padding: 20px;
 }
+
+#expensesChart {
+    height: auto;
+    border: none;
+    background-color: transparent;
+    padding-bottom: px;
+}
+
 
 /*---------------------------EXPENSES GRAPH---------------------------*/
 .expenses-graph {
