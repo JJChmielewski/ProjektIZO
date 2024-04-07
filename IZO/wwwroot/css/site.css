@@ -245,6 +245,7 @@ input[type="number"] {
 
 .fixed-expenses-table {
 
+
 }
 d2d-expenses-table {
 
@@ -252,20 +253,24 @@ d2d-expenses-table {
 
 /*---------------------------REMAINING FUNDS---------------------------*/
 .remaining-funds {
-
+    background-color: #1c1c1c;
+    border-radius: 10px;
 }
 
 /*---------------------------EXPENSES CHART---------------------------*/
 .expenses-chart {
-
+    background-color: #1c1c1c;
+    border-radius: 10px;
 }
 
 /*---------------------------EXPENSES GRAPH---------------------------*/
 .expenses-graph {
-
+    background-color: #1c1c1c;
+    border-radius: 10px;
 }
 
 /*---------------------------SAVINGS CALCULATOR---------------------------*/
 .saving-calculator {
-
+    background-color: #1c1c1c;
+    border-radius: 10px;
 }
