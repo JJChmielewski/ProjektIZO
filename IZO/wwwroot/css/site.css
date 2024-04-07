@@ -1,18 +1,271 @@
-html {
-  font-size: 14px;
-}
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/*---------------------MAIN---------------------*/
 body {
-  margin-bottom: 60px;
+    background-color: #111111; /* Dark background for the page */
+}
+
+/*---------------------TABLES---------------------*/
+table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0px;
+    font-size: 0.9em; /* Slightly smaller font size for a more refined look */
+    font-family: 'Segoe UI', sans-serif;
+    background-color: none; /* Dark background for the table */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3); /* Stronger shadow for more depth */
+    color: #FFFFFF; /* Light text for better readability on a dark background */
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px 24px; /* Slightly more padding for a roomier layout */
+    border-bottom: 1px solid #1c1c1c; /* Subtle border within the dark theme */
+    color: #FFFFFF; /* Light text color for better contrast */
+    text-align: left;
+}
+
+/* Header styling */
+thead th {
+    background-color: #1c1c1c; /* A custom shade for the table header */
+    color: #e7e7e7; /* A lighter purple accent color for header text */
+    font-weight: 600; /* Slightly bolder font weight for headers */
+}
+
+/* Body styling */
+tbody tr {
+    background-color: #292929; /* Background color for table rows */
+    border-bottom: 1px solid #2a2c37; /* A deeper border color for rows to complement the theme */
+}
+
+    tbody tr:hover {
+        background-color: #292D3E; /* A custom blue shade for hover effect */
+    }
+
+    tbody tr:last-of-type td {
+        border-bottom: none;
+    }
+
+tbody td:nth-child(2), thead th:nth-child(2), tbody td:nth-child(4), thead th:nth-child(4) {
+    text-align: center;
+}
+
+tbody td:nth-child(3), thead th:nth-child(3) {
+    text-align: center;
+}
+
+
+/* Responsive design adjustments */
+@media screen and (max-width: 600px) {
+    table {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+    }
+
+    th, td {
+        padding: 8px 16px; /* Adjust padding for smaller screens */
+    }
+}
+
+/*---------------------ADD-DELETE EXPENSE BUTTONS---------------------*/
+
+.btn-add-exp {
+    background-color: transparent; /* Green background color */
+    border: none; /* Remove border */
+    color: white; /* Text color */
+    padding: 3px 8px; /* Padding */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
+    font-size: 18px;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    transition: background-color 0.8s ease; /* Smooth transition on hover */
+}
+
+.btn-add-exp:hover {
+    padding: 3px 8px; /* Padding */
+    background-color: #45a049; /* Darker green on hover */
+}
+
+.btn-del-exp {
+    background-color: transparent; /* Green background color */
+    border: none; /* Remove border */
+    color: white; /* Text color */
+    padding: 1px 5px; /* Padding */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
+    font-size: 15px;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    transition: background-color 0.8s ease; /* Smooth transition on hover */
+}
+
+.btn-del-exp:hover {
+    padding: 1px 5px; /* Padding */
+    background-color: #be3c46; /* Darker green on hover */
+}
+
+
+
+
+
+/*---------------------------MODAL AND AJAX---------------------------*/
+/* used for pop-ups */
+
+.modal {
+    display: flex; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal Content */
+.modal-content {
+    color: #FFFFFF;
+    background-color: #292929;
+    margin: 20% auto; /* from the top and centered */
+    padding: 30px;
+    padding-bottom: 60px;
+    border: 1px solid #888;
+    width: 30%; /* Could be more or less, depending on screen size */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+#addExpenseForm > div {
+    display: flex;
+    align-items: center;
+}
+
+#date, #category, #value {
+    -webkit-appearance: none; /* For WebKit browsers */
+    -moz-appearance: none; /* For Mozilla Firefox */
+    background-color: #292929; /* Background color */
+    border: 1px solid grey; /* Border style */
+    color: white; /* Text color */
+    color-scheme: dark;
+    padding: 8px; /* Padding */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    font-size: 14px; /* Font size */
+    margin-bottom: 10px; /* Space between the inputs */
+    margin-left: 10px;
+    transition: border-color 0.5s ease;
+    flex-grow: 1;
+}
+
+
+/*Hiding incrementing arrows for Value - Chrome, Safari, Edge*/
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+/* For Firefox and Opera */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+#date:focus,
+#value:focus,
+#category:focus {
+    border-color: #45a049; /* Change border color on focus */
+    outline: none; /* Remove default focus outline */
+}
+
+.btn-submit {
+    position: absolute;
+    margin: 10px;
+    bottom: 5px;
+    right: 10px;
+    background-color: transparent; /* Green background color */
+    border: none; /* Remove border */
+    color: white; /* Text color */
+    padding: 3px 8px; /* Padding */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
+    font-size: 18px; /* Font size */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    transition: background-color 0.8s ease;
+
+}
+
+.btn-submit:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    position: absolute; /* Changed from float to absolute positioning */
+    top: 0px; /* Adjust as needed to align perfectly in the top corner */
+    right: 12px; /* Adjust as needed for right alignment */
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer; /* It's good practice to change the cursor to pointer to indicate it's clickable */
+}
+
+.close:hover,
+.close:focus {
+    color: #be3c46;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/*---------------------------EXPENSES TABLES---------------------------*/
+.layout {
+    width: 100%;
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: 3fr 3fr 2fr;
+    gap: 24px;
+    grid-auto-flow: column;
+    border-collapse: collapse;
+    margin: 20px 0px;
+    font-size: 0.9em; /* Slightly smaller font size for a more refined look */
+    font-family: 'Segoe UI', sans-serif;
+    background-color: none; /* Dark background for the table */
+    color: #FFFFFF; /* Light text for better readability on a dark background */
+    overflow: hidden;
+}
+
+.fixed-expenses-table {
+
+}
+d2d-expenses-table {
+
+}
+
+/*---------------------------REMAINING FUNDS---------------------------*/
+.remaining-funds {
+
+}
+
+/*---------------------------EXPENSES CHART---------------------------*/
+.expenses-chart {
+
+}
+
+/*---------------------------EXPENSES GRAPH---------------------------*/
+.expenses-graph {
+
+}
+
+/*---------------------------SAVINGS CALCULATOR---------------------------*/
+.saving-calculator {
+
 }

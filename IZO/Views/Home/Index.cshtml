@@ -1,8 +1,214 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using IZO.Models.Expenses
+@model IZO.Models.Expenses.MonthlyExpenses
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="layout">
+        <div class="fixed-expenses-table">
+            <h2>Fixed Expenses</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount Spent</th>
+                        <th>
+                            <button class="btn-add-exp">   
+                                <i class="fa fa-plus-square"></i>
+                            </button>
+                    
+                        </th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model.fixedExpenses)
+                    {
+                        <tr>
+                            <td>@expense.Value.Date.ToShortDateString()</td>
+                            <td>@expense.Key</td>
+                            <td>@expense.Value.moneySpent</td>
+                            <td>
+                                <button class="btn-del-exp">
+                                    <i class="fa fa-trash-o"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="d2d-expenses-table">
+            <h2>Day-to-day Expenses</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount Spent</th>
+                        <th>
+                            <button class="btn-add-exp">
+                                <i class="fa fa-plus-square"></i>
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model.dayToDayExpenses)
+                    {
+                        <tr>
+                            <td>@expense.Value.Date.ToShortDateString()</td>
+                            <td>@expense.Key</td>
+                            <td>@expense.Value.moneySpent</td>
+                            <td>
+                                <button class="btn-del-exp">
+                                    <i class="fa fa-trash-o"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <!-- placeholder -->
+        </div>
 
-<div class="text-center">
-    <h1 class="display-4">Expense Tracker</h1>
-    <p>This is where the main screen will be</p>
-</div>
+    <!-- Charts and other functions -->
+        <div class="remaining-funds">
+            <h2>Remaining Funds</h2>
+            <p id="remainingFunds">$0.00</p> <!-- Placeholder value -->
+        </div>
+        <div class="expenses-chart">
+            <h2>Expenses Chart</h2>
+            <canvas id="expensesChart"></canvas> <!-- Canvas for Chart.js or similar -->
+        </div>
+        <div class="expenses-graph">
+            <h2>Expenses Graph</h2>
+            <canvas id="expensesGraph"></canvas> <!-- Canvas for another graph representation -->
+        </div>
+        <div class="saving-calculator">
+            <h2>Saving Calculator</h2>
+            <form id="savingCalculatorForm">
+                <div>
+                    <label for="expectedIncome">Expected Income:</label>
+                    <input type="number" id="expectedIncome" name="expectedIncome" step="1" required>
+                </div>
+                <div>
+                    <label for="expectedExpenses">Expected Expenses:</label>
+                    <input type="number" id="expectedExpenses" name="expectedExpenses" step="1" required>
+                </div>
+                <div>
+                    <button type="button" class="btn-calculate-savings" onclick="calculateSavings()">Calculate Savings</button>
+                </div>
+            </form>
+            <p id="calculatedSavings">$0.00</p> <!-- Placeholder for calculated savings -->
+        </div>
+    </div>
+
+    <!-- Modal for Adding Expense -->
+    <div id="addExpenseModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="margin-bottom: 20px">Add new expense</h2>
+            <form id="addExpenseForm">
+                <div>
+                    <label for="date" style="margin-bottom: 10px">Date:</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                <div>
+                    <label for="category" style="margin-bottom: 10px">Category:</label>
+                    <select id="category" name="category">
+                        @foreach (ExpenseCategory category in Enum.GetValues(typeof(ExpenseCategory)))
+                        {
+                            <option value="@category.ToString()">@category</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <label for="value" style="margin-bottom: 10px">Amount:</label>
+                    <input type="number" id="value" name="value" step="1" required>
+                </div>
+                <button type="button" class="btn-submit" onclick="submitExpense()">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("addExpenseModal");
+    var closeButton = document.getElementsByClassName("close")[0];
+
+    // Function to open modal
+    function openModal() {
+        modal.style.display = "block";
+        // Set the date input to today's date
+        setTodaysDate();
+    }
+
+    // Close the modal when the user clicks anywhere outside of it
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    closeButton.onclick = function () {
+        modal.style.display = "none";
+    };
+
+    // Function to submit the expense form
+    function submitExpense() {
+        var date = document.getElementById('date').value;
+        var category = document.getElementById('category').value;
+        var value = document.getElementById('value').value;
+
+        // AJAX request
+        $.ajax({
+            url: '@Url.Action("AddExpense", "Home")', // Controller/Action path
+            type: 'POST',
+            data: { date: date, category: category, value: value },
+            success: function (response) {
+                // Close the modal
+                modal.style.display = "none";
+                // Optionally, refresh or update the part of page with the new data
+                alert('Expense added successfully');
+            },
+            error: function () {
+                alert('Error adding expense');
+            }
+        });
+    }
+
+    // Attach the openModal function to add expense button
+    $('.btn-add-exp').click(function () {
+        openModal();
+    });
+
+    // Function to set the date input to today's date
+    function setTodaysDate() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementById('date').value = today;
+    }
+
+    // Optionally, set the date when the page loads
+    document.addEventListener("DOMContentLoaded", function () {
+        setTodaysDate();
+    });
+</script>
+
+

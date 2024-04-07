@@ -1,4 +1,5 @@
 ﻿using IZO.Models;
+using IZO.Models.Expenses;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -15,7 +16,8 @@ namespace IZO.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var monthlyExpenses = MonthlyExpenses.GetMockData();
+            return View(monthlyExpenses);
         }
 
         public IActionResult Privacy()
