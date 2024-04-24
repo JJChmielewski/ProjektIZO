@@ -279,7 +279,87 @@ d2d-expenses-table {
 }
 
 /*---------------------------SAVINGS CALCULATOR---------------------------*/
+
+table tbody {
+    display: block;
+    max-height: 410px;
+    overflow-y: scroll;
+}
+
+table thead, table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.remaining-funds h2 {
+    text-align: center;
+    padding-top: 30px;
+    font-size: xxx-large;
+}
+.remaining-funds p {
+    text-align: center;
+    padding-top: 122px;
+    text-transform: uppercase;
+    font-size: 63px;
+}
+/* Stylowanie formularza */
 .saving-calculator {
+    padding: 20px;
     background-color: #1c1c1c;
-    border-radius: 10px;
+}
+
+    .saving-calculator h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .saving-calculator form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .saving-calculator label {
+
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .saving-calculator input[type="number"] {
+
+        padding: 10px;
+        margin-bottom: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .saving-calculator .btn-calculate-savings {
+        width: -webkit-fill-available;
+        margin-top: 15px;
+        padding: 12px 20px;
+        background-color: darkgrey;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .saving-calculator .btn-calculate-savings:hover {
+            background-color: rgb(236, 236, 236);
+        }
+
+    /* Stylowanie wyniku kalkulacji */
+    .saving-calculator #calculatedTime {
+        text-align: center;
+        font-size: 18px;
+        margin-top: 20px;
+        color: white;
+        font-size:xx-large
+    }
+
+button, input, optgroup, select, textarea {
+    width: -webkit-fill-available;
+
 }
