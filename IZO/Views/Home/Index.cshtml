@@ -149,22 +149,20 @@
             <canvas id="expensesGraph"></canvas> <!-- Canvas for another graph representation -->
         </div>
         <div class="saving-calculator">
-            <h2>Saving Calculator</h2>
-            <form id="savingCalculatorForm">
-                <div>
-                    <label for="expectedIncome">Expected Income:</label>
-                    <input type="number" id="expectedIncome" name="expectedIncome" step="1" required>
-                </div>
-                <div>
-                    <label for="expectedExpenses">Expected Expenses:</label>
-                    <input type="number" id="expectedExpenses" name="expectedExpenses" step="1" required>
-                </div>
-                <div>
-                    <button type="button" class="btn-calculate-savings" onclick="calculateSavings()">Calculate Savings</button>
-                </div>
-            </form>
-            <p id="calculatedSavings">$0.00</p> <!-- Placeholder for calculated savings -->
-        </div>
+     <div class="saving-calculator">
+     <h2>Saving Calculator</h2>
+     <form id="savingCalculatorForm">
+         <div>
+             <label for="plannedAmount">Planned Amount</label>
+             <input type="text" id="plannedAmount" name="plannedAmount" pattern="\d+(\.\d{1,2})?" title="Please enter a valid amount (e.g., 100 or 100.50)" required>
+         </div>
+         <div>
+             <button type="button" class="btn-calculate-savings" onclick="calculateSavings()">Calculate Savings</button>
+         </div>
+     </form>
+     <p id="calculatedTime">0 Month/s</p> <!-- Placeholder for calculated savings -->
+ </div>
+
     </div>
 
     <!-- Modal for Adding Expense -->
