@@ -49,7 +49,7 @@ namespace IZO.Services
             return Path.Combine(pathToSavedDir, String.Format("{0}-{1}.json", month, year));
         }
 
-        private static Dictionary<ExpenseCategory, Expense> getPastFixedExpenses()
+        private static Dictionary<ExpenseCategory, Expense[]> getPastFixedExpenses()
         {
             if (Directory.Exists(pathToSavedDir))
             {
@@ -85,7 +85,7 @@ namespace IZO.Services
                 }
             }
 
-            return new Dictionary<ExpenseCategory, Expense>();
+            return new Dictionary<ExpenseCategory, Expense[]>();
         }
 
     }

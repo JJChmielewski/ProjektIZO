@@ -1,5 +1,6 @@
 ﻿@using IZO.Models.Expenses
 @using IZO.Models.Charts
+@using IZO.Services
 @model IZO.Models.ViewModels.ExpensesViewModel
 
 <!DOCTYPE html>
@@ -22,7 +23,7 @@
                         <th>Category</th>
                         <th>Amount Spent</th>
                         <th>
-                            <button class="btn-add-exp">   
+                            <button class="btn-add-exp" onclick="openModal('FIXED')">
                                 <i class="fa fa-plus-square"></i>
                             </button>
                     
@@ -30,18 +31,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var expense in Model.MonthlyExpenses.fixedExpenses)
+                    @foreach (var category in ExpenseAccesorService.monthlyExpenses.fixedExpenses)
                     {
-                        <tr>
-                            <td>@expense.Value.Date.ToShortDateString()</td>
-                            <td>@expense.Key.ToString()</td>
-                            <td>@expense.Value.moneySpent.ToString("C")</td>
-                            <td>
-                                <button class="btn-del-exp">
-                                    <i class="fa fa-trash-o"></i>
-                                </button>
-                            </td>
-                        </tr>
+                        @foreach(var expense in category.Value)
+                        {
+                            <tr>
+                                <td>@expense.Date.ToShortDateString()</td>
+                                <td>@category.Key.ToString()</td>
+                                <td>@expense.moneySpent.ToString("C")</td>
+                                <td>
+                                    <button class="btn-del-exp" onclick="deleteExpense('@expense.Date', '@expense.category', '@expense.moneySpent', 'FIXED')">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
@@ -54,25 +58,28 @@
                         <th>Category</th>
                         <th>Amount Spent</th>
                         <th>
-                            <button class="btn-add-exp">
+                            <button class="btn-add-exp" onclick="openModal('D2D')">
                                 <i class="fa fa-plus-square"></i>
                             </button>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var expense in Model.MonthlyExpenses.dayToDayExpenses)
+                    @foreach (var category in ExpenseAccesorService.monthlyExpenses.dayToDayExpenses)
                     {
-                        <tr>
-                            <td>@expense.Value.Date.ToShortDateString()</td>
-                            <td>@expense.Key.ToString()</td>
-                            <td>@expense.Value.moneySpent.ToString("C")</td>
-                            <td>
-                                <button class="btn-del-exp">
-                                    <i class="fa fa-trash-o"></i>
-                                </button>
-                            </td>
-                        </tr>
+                        @foreach (var expense in category.Value)
+                        {
+                            <tr>
+                                <td>@expense.Date.ToShortDateString()</td>
+                                <td>@category.Key.ToString()</td>
+                                <td>@expense.moneySpent.ToString("C")</td>
+                                <td>
+                                    <button class="btn-del-exp" onclick="deleteExpense('@expense.Date', '@expense.category', '@expense.moneySpent', 'D2D')">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
@@ -171,6 +178,7 @@
             <span class="close">&times;</span>
             <h2 style="margin-bottom: 20px">Add new expense</h2>
             <form id="addExpenseForm">
+                <input id= "expenseCategoryField" type="text" value="" hidden/>
                 <div>
                     <label for="date" style="margin-bottom: 10px">Date:</label>
                     <input type="date" id="date" name="date" required>
@@ -201,8 +209,10 @@
     var closeButton = document.getElementsByClassName("close")[0];
 
     // Function to open modal
-    function openModal() {
+    function openModal(type) {
         modal.style.display = "block";
+        var typeField = document.getElementById("expenseCategoryField")
+        typeField.value = type
         // Set the date input to today's date
         setTodaysDate();
     }
@@ -223,28 +233,23 @@
         var date = document.getElementById('date').value;
         var category = document.getElementById('category').value;
         var value = document.getElementById('value').value;
+        var type = document.getElementById('expenseCategoryField').value;
 
         // AJAX request
         $.ajax({
-            url: '@Url.Action("AddExpense", "Home")', // Controller/Action path
+            url: '@Url.Action("AddExpense", "Expense")', // Controller/Action path
             type: 'POST',
-            data: { date: date, category: category, value: value },
+            data: { type: type, date: date, category: category, value: value },
             success: function (response) {
                 // Close the modal
                 modal.style.display = "none";
-                // Optionally, refresh or update the part of page with the new data
-                alert('Expense added successfully');
+                window.location.reload();
             },
             error: function () {
                 alert('Error adding expense');
             }
         });
     }
-
-    // Attach the openModal function to add expense button
-    $('.btn-add-exp').click(function () {
-        openModal();
-    });
 
     // Function to set the date input to today's date
     function setTodaysDate() {
@@ -261,6 +266,22 @@
     document.addEventListener("DOMContentLoaded", function () {
         setTodaysDate();
     });
+
+    function deleteExpense(date, category, value, type) {
+        $.ajax({
+            url: '@Url.Action("DeleteExpense", "Expense")', // Controller/Action path
+            type: 'POST',
+            data: { type: type, date: date, category: category, value: value },
+            success: function (response) {
+                // Close the modal
+                modal.style.display = "none";
+                window.location.reload();
+            },
+            error: function () {
+                alert('Error deleting expense');
+            }
+        });
+    }
 </script>
 
 
