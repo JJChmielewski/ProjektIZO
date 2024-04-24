@@ -62,18 +62,38 @@ namespace IZO.Controllers
             return Json(new { success = false, message = "Invalid category." });
         }
 
-        public void OnPostFixed()
+        public IActionResult DeleteExpense(string type, DateTime date, string category, double value)
         {
-            Expense expense = new Expense();
-            if (Request.Form != null)
+            // The add expense logic now resides here...
+            if (Enum.TryParse(category, out ExpenseCategory expenseCategory))
             {
-                expense.category = Enum.Parse<ExpenseCategory>(Request.Form["category"]);
-                expense.Date = DateTime.Parse(Request.Form["date"]);
-                expense.moneySpent = Double.Parse(Request.Form["value"]);
-                List<Expense> expenses = ExpenseAccesorService.monthlyExpenses.fixedExpenses[expense.category].ToList();
-                expenses.Add(expense);
-                ExpenseAccesorService.monthlyExpenses.fixedExpenses.Add(expense.category, expenses.ToArray());
+
+                switch (type)
+                {
+                    case "FIXED":
+                        if (ExpenseAccesorService.monthlyExpenses.fixedExpenses.ContainsKey(expenseCategory))
+                        {
+                            List<Expense> expenses = ExpenseAccesorService.monthlyExpenses.fixedExpenses[expenseCategory].ToList();
+                            expenses.Remove(expenses.Single( expense => expense.category == expenseCategory && expense.moneySpent == value && expense.Date == date));
+                            ExpenseAccesorService.monthlyExpenses.fixedExpenses[expenseCategory] = expenses.ToArray();
+                        }
+                        break;
+                    case "D2D":
+                        if (ExpenseAccesorService.monthlyExpenses.dayToDayExpenses.ContainsKey(expenseCategory))
+                        {
+                            List<Expense> expenses = ExpenseAccesorService.monthlyExpenses.dayToDayExpenses[expenseCategory].ToList();
+                            expenses.Remove(expenses.Single(expense => expense.category == expenseCategory && expense.moneySpent == value && expense.Date == date));
+                            ExpenseAccesorService.monthlyExpenses.dayToDayExpenses[expenseCategory] = expenses.ToArray();
+                        }
+                        break;
+
+                }
+                ExpenseAccesorService.saveExpenses();
+
+                return Json(new { success = true });
             }
+
+            return Json(new { success = false, message = "Invalid category." });
         }
     }
 }

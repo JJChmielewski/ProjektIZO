@@ -40,7 +40,7 @@
                                 <td>@category.Key.ToString()</td>
                                 <td>@expense.moneySpent.ToString("C")</td>
                                 <td>
-                                    <button class="btn-del-exp" >
+                                    <button class="btn-del-exp" onclick="deleteExpense('@expense.Date', '@expense.category', '@expense.moneySpent', 'FIXED')">
                                         <i class="fa fa-trash-o"></i>
                                     </button>
                                 </td>
@@ -74,7 +74,7 @@
                                 <td>@category.Key.ToString()</td>
                                 <td>@expense.moneySpent.ToString("C")</td>
                                 <td>
-                                    <button class="btn-del-exp">
+                                    <button class="btn-del-exp" onclick="deleteExpense('@expense.Date', '@expense.category', '@expense.moneySpent', 'D2D')">
                                         <i class="fa fa-trash-o"></i>
                                     </button>
                                 </td>
@@ -268,6 +268,22 @@
     document.addEventListener("DOMContentLoaded", function () {
         setTodaysDate();
     });
+
+    function deleteExpense(date, category, value, type) {
+        $.ajax({
+            url: '@Url.Action("DeleteExpense", "Expense")', // Controller/Action path
+            type: 'POST',
+            data: { type: type, date: date, category: category, value: value },
+            success: function (response) {
+                // Close the modal
+                modal.style.display = "none";
+                window.location.reload();
+            },
+            error: function () {
+                alert('Error deleting expense');
+            }
+        });
+    }
 </script>
 
 
