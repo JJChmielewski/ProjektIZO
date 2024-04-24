@@ -7,7 +7,7 @@ namespace IZO.Controllers
     {
         public IActionResult Index()
         {
-            var pieChartData = ExpensePieChart.GetMockData(); // Get the mock data
+            var pieChartData = ExpensePieChart.initChartData(); // Get the mock data
             return View(pieChartData); // Pass it to the view
         }
     }
