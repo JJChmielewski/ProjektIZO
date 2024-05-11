@@ -149,7 +149,11 @@ tbody td:nth-child(3), thead th:nth-child(3) {
     align-items: center;
 }
 
-#date, #category, #value {
+#addEarningForm > div {
+    display: flex;
+    align-items: center;
+}
+#date, #category, #value, #date1, #category1, #value1 {
     -webkit-appearance: none; /* For WebKit browsers */
     -moz-appearance: none; /* For Mozilla Firefox */
     background-color: #292929; /* Background color */
