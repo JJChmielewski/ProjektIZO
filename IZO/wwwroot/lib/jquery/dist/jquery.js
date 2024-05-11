@@ -5625,7 +5625,8 @@ function leverageNative( el, type, expectSync ) {
 		namespace: false,
 		handler: function( event ) {
 			var notAsync, result,
-				saved = dataPriv.get( this, type );
+				
+			= dataPriv.get( this, type );
 
 			if ( ( event.isTrigger & 1 ) && this[ type ] ) {
 

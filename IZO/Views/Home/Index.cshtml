@@ -1,4 +1,5 @@
-﻿@using IZO.Models.Expenses
+﻿@using IZO.Models.Earnings
+@using IZO.Models.Expenses
 @using IZO.Models.Charts
 @using IZO.Services
 @model IZO.Models.ViewModels.ExpensesViewModel
@@ -15,6 +16,41 @@
 </head>
 <body>
     <div class="layout">
+        <div class="fixed1-earning-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount Spent</th>
+                        <th>
+                            <button class="btn-add-ear" onclick="openEarningModal('FIXED1')">
+                                <i class="fa fa-plus-square"></i>
+                            </button>
+
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in EarningAccesorService.monthlyEarnings.fixed1Earnings)
+                    {
+                        @foreach (var earning in category.Value)
+                        {
+                            <tr>
+                                <td>@earning.Date.ToShortDateString()</td>
+                                <td>@category.Key.ToString()</td>
+                                <td>@earning.moneyEarn.ToString("C")</td>
+                                <td>
+                                    <button class="btn-del-exp" onclick="deleteExpense('@earning.Date', '@earning.category', '@earning.moneyEarn', 'FIXED1')">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
         <div class="fixed-expenses-table">
             <table>
                 <thead>
@@ -23,7 +59,7 @@
                         <th>Category</th>
                         <th>Amount Spent</th>
                         <th>
-                            <button class="btn-add-exp" onclick="openModal('FIXED')">
+                            <button class="btn-add-exp" onclick="openExpenseModal('FIXED')">
                                 <i class="fa fa-plus-square"></i>
                             </button>
                     
@@ -58,7 +94,7 @@
                         <th>Category</th>
                         <th>Amount Spent</th>
                         <th>
-                            <button class="btn-add-exp" onclick="openModal('D2D')">
+                            <button class="btn-add-exp" onclick="openExpenseModal('D2D')">
                                 <i class="fa fa-plus-square"></i>
                             </button>
                         </th>
@@ -200,18 +236,54 @@
             </form>
         </div>
     </div>
+
+        <div id="addEarningModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 style="margin-bottom: 20px">Add new earning</h2>
+                <form id="addEarningForm">
+                    <input id="earningCategoryField" type="text" value="" hidden />
+                    <div>
+                        <label for="date" style="margin-bottom: 10px">Date:</label>
+                        <input type="date" id="date1" name="date" required>
+                    </div>
+                    <div>
+                        <label for="category" style="margin-bottom: 10px">Category:</label>
+                        <select id="category1" name="category">
+                            @foreach (EarningCategory category in Enum.GetValues(typeof(EarningCategory)))
+                            {
+                                <option value="@category.ToString()">@category</option>
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <label for="value" style="margin-bottom: 10px">Amount:</label>
+                        <input type="number" id="value1" name="value" step="1" required>
+                    </div>
+                    <button type="button" class="btn-submit" onclick="submitEarning()">Submit</button>
+                </form>
+            </div>
+        </div>
 </body>
 </html>
 
 <script>
     // Get the modal
-    var modal = document.getElementById("addExpenseModal");
+    var modalExpense = document.getElementById("addExpenseModal");
+    var modalEarning = document.getElementById("addEarningModal");
     var closeButton = document.getElementsByClassName("close")[0];
 
     // Function to open modal
-    function openModal(type) {
-        modal.style.display = "block";
+    function openExpenseModal(type) {
+        modalExpense.style.display = "block";
         var typeField = document.getElementById("expenseCategoryField")
+        typeField.value = type
+        // Set the date input to today's date
+        setTodaysDate();
+    }
+    function openEarningModal(type) {
+        modalEarning.style.display = "block";
+        var typeField = document.getElementById("earningCategoryField")
         typeField.value = type
         // Set the date input to today's date
         setTodaysDate();
@@ -220,12 +292,14 @@
     // Close the modal when the user clicks anywhere outside of it
     window.onclick = function (event) {
         if (event.target == modal) {
-            modal.style.display = "none";
+            modalExpense.style.display = "none";
+            modalEarning.style.display = "none";
         }
     }
 
     closeButton.onclick = function () {
-        modal.style.display = "none";
+        modalExpense.style.display = "none";
+        modalEarning.style.display = "none";
     };
 
     // Function to submit the expense form
@@ -242,11 +316,33 @@
             data: { type: type, date: date, category: category, value: value },
             success: function (response) {
                 // Close the modal
-                modal.style.display = "none";
+                modalExpense.style.display = "none";
                 window.location.reload();
             },
             error: function () {
                 alert('Error adding expense');
+            }
+        });
+    }
+
+    function submitEarning() {
+        var date = document.getElementById('date1').value;
+        var category = document.getElementById('category1').value;
+        var value = document.getElementById('value1').value;
+        var type = document.getElementById('earningCategoryField').value;
+
+        // AJAX request
+        $.ajax({
+            url: '@Url.Action("AddEarning", "Earning")', // Controller/Action path
+            type: 'POST',
+            data: { type: type, date: date, category: category, value: value },
+            success: function (response) {
+                // Close the modal
+                modalEarning.style.display = "none";
+                window.location.reload();
+            },
+            error: function () {
+                alert('Error adding earning');
             }
         });
     }
