@@ -14,6 +14,4 @@ namespace IZO.Models.ViewModels
         public MonthlyEarnings MonthlyExpenses { get; set; }
         public EarningsPieChart EarningPieChart { get; set; }
     }
-
-
 }

@@ -16,42 +16,8 @@
 </head>
 <body>
     <div class="layout">
-        <div class="fixed1-earning-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Category</th>
-                        <th>Amount Spent</th>
-                        <th>
-                            <button class="btn-add-ear" onclick="openEarningModal('FIXED1')">
-                                <i class="fa fa-plus-square"></i>
-                            </button>
-
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var category in EarningAccesorService.monthlyEarnings.fixed1Earnings)
-                    {
-                        @foreach (var earning in category.Value)
-                        {
-                            <tr>
-                                <td>@earning.Date.ToShortDateString()</td>
-                                <td>@category.Key.ToString()</td>
-                                <td>@earning.moneyEarn.ToString("C")</td>
-                                <td>
-                                    <button class="btn-del-exp" onclick="deleteExpense('@earning.Date', '@earning.category', '@earning.moneyEarn', 'FIXED1')">
-                                        <i class="fa fa-trash-o"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
         <div class="fixed-expenses-table">
+            <h2>Monthly expenses</h2>
             <table>
                 <thead>
                     <tr>
@@ -87,6 +53,7 @@
             </table>
         </div>
         <div class="d2d-expenses-table">
+            <h2>Day-2-day expenses</h2>
             <table>
                 <thead>
                     <tr>
@@ -120,8 +87,41 @@
                 </tbody>
             </table>
         </div>
-        <div>
-            <!-- placeholder -->
+        <div class="fixed1-earning-table">
+            <h2>Income</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount Spent</th>
+                        <th>
+                            <button class="btn-add-ear" onclick="openEarningModal('FIXED1')">
+                                <i class="fa fa-plus-square"></i>
+                            </button>
+
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in EarningAccesorService.monthlyEarnings.fixed1Earnings)
+                    {
+                        @foreach (var earning in category.Value)
+                        {
+                            <tr>
+                                <td>@earning.Date.ToShortDateString()</td>
+                                <td>@category.Key.ToString()</td>
+                                <td>@earning.moneyEarn.ToString("C")</td>
+                                <td>
+                                    <button class="btn-del-exp" onclick="deleteExpense('@earning.Date', '@earning.category', '@earning.moneyEarn', 'FIXED1')">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
 
     <!-- Charts and other functions -->
@@ -184,14 +184,93 @@
 
                 createPieChart(pieChartData);
             });
+
+
         </script>
 
 
         <div class="expenses-graph">
-            <h2>Expenses Graph</h2>
+            <h2>Financial Overview</h2>
             <canvas id="expensesGraph"></canvas> <!-- Canvas for another graph representation -->
         </div>
-        <div class="saving-calculator">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            var pieChartData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ExpensePieChart.ExpensesByCategory.Select(x => new {Total = x.Value }))); // TU CHCIAŁEM PODOBNIE JAK WE WCZESNIEJSZYM WYKRESIE ZGARNAC TE DANE 
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // Sample data: Earnings are positive, and expenses are negative
+                var financialData = { // -------------------------------------------------------------TUTAJ SA DANE DLA 5 MIESIECY 
+                    labels: ["January", "February", "March", "April", "May"], // Example months
+                    
+                    datasets: [
+                        {
+                            label: 'Earnings',
+                            data: [1200, 1400, 1300, 1500, 1600], // ----------------SAMPLE DATA
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)', // Blue
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1,
+                            stack: 'stack0',
+                            barThickness: 15
+                        },
+                        {
+                            label: 'Expenses',
+                            data: [-800, -700, -900, -500, -1100], // ---------------SAMPLE DATA
+                            backgroundColor: 'rgba(255, 99, 132, 0.6)', // Red
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1,
+                            stack: 'stack0',
+                            barThickness: 15
+                        }
+                    ]
+                };
+                
+                function createFinancialChart(data) {
+                    const ctx = document.getElementById('expensesGraph').getContext('2d');
+
+                    const financialChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: data,
+                        options: {
+                            scales: {
+                                x: {
+                                    stacked: true,
+                                    barPercentage: 0.25,  // Reduces bar width to 25% of its category slot
+                                    categoryPercentage: 0.6  // Adjusts the percentage of the category width used by bars
+                                },
+                                y: {
+                                    stacked: true,
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value, index, values) {
+                                            return Math.abs(value); // Ensures the scale shows positive numbers only
+                                        }
+                                    }
+                                }
+                            },
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (tooltipItem) {
+                                            return tooltipItem.dataset.label + ': ' + Math.abs(tooltipItem.raw);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                createFinancialChart(financialData);
+            });
+        </script>
+       
+
+     <div class="saving-calculator">
      <div class="saving-calculator">
      <h2>Saving Calculator</h2>
      <form id="savingCalculatorForm">
@@ -205,6 +284,7 @@
      </form>
      <p id="calculatedTime">0 Month/s</p> <!-- Placeholder for calculated savings -->
  </div>
+        
 
     </div>
 
