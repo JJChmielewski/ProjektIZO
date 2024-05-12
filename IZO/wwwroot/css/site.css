@@ -235,9 +235,9 @@ input[type="number"] {
     width: 100%;
     display: grid;
     grid-template-rows: repeat(3, 1fr);
-    grid-template-columns: 3fr 3fr 2fr;
+    grid-template-columns: 3fr 3fr 3fr;
     gap: 24px;
-    grid-auto-flow: column;
+    grid-auto-flow: row;
     border-collapse: collapse;
     margin: 20px 0px;
     font-size: 0.9em; /* Slightly smaller font size for a more refined look */
@@ -299,6 +299,14 @@ d2d-expenses-table {
 .expenses-graph {
     background-color: #1c1c1c;
     border-radius: 10px;
+    padding: 20px;
+}
+
+#expensesGraph {
+    height: auto;
+    border: none;
+    background-color: transparent;
+    margin-top: 75px;
 }
 
 /*---------------------------SAVINGS CALCULATOR---------------------------*/
@@ -344,22 +352,23 @@ table thead, table tbody tr {
     }
 
     .saving-calculator label {
-
         font-weight: bold;
         margin-bottom: 8px;
+        margin-left: 70px;
     }
 
     .saving-calculator input[type="number"] {
-
         padding: 10px;
         margin-bottom: 16px;
         border: 1px solid #ccc;
         border-radius: 4px;
+        margin-left: 70px;
     }
 
     .saving-calculator .btn-calculate-savings {
         width: -webkit-fill-available;
         margin-top: 15px;
+        margin-left: 90px;
         padding: 12px 20px;
         background-color: darkgrey;
         color: white;

@@ -124,19 +124,9 @@
             </table>
         </div>
 
-        <!-- Charts and other functions -->
-        <div class="remaining-funds">
-            <h2>Remaining Funds</h2>
-            <p id="remainingFunds">$0.00</p> <!-- Placeholder value -->
-        </div>
         <div class="expenses-chart">
             <h2>Expenses Chart</h2>
             <canvas id="expensesChart"></canvas>
-        </div>
-
-        <div class="earnings-chart">
-            <h2>Earning Chart</h2>
-            <canvas id="earningsChart"></canvas>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -203,8 +193,8 @@
                 <h2>Saving Calculator</h2>
                 <form id="savingCalculatorForm">
                     <div>
-                        <label for="plannedAmount">Planned Amount</label>
-                        <input type="text" id="plannedAmount" name="plannedAmount" pattern="\d+(\.\d{1,2})?" title="Please enter a valid amount (e.g., 100 or 100.50)" required>
+                        <label for="plannedAmount">Planned Amount</label><br/>
+                        <input type="number" id="plannedAmount" name="plannedAmount" pattern="\d+(\.\d{1,2})?" title="Please enter a valid amount (e.g., 100 or 100.50)" required>
                     </div>
                     <div>
                         <button type="button" class="btn-calculate-savings" onclick="executeGeneratePlan()">Calculate Savings</button>
@@ -298,25 +288,6 @@
                 createFinancialChart(financialData);
             });
         </script>
-       
-
-     <div class="saving-calculator">
-     <div class="saving-calculator">
-     <h2>Saving Calculator</h2>
-     <form id="savingCalculatorForm">
-         <div>
-             <label for="plannedAmount">Planned Amount</label>
-             <input type="text" id="plannedAmount" name="plannedAmount" pattern="\d+(\.\d{1,2})?" title="Please enter a valid amount (e.g., 100 or 100.50)" required>
-         </div>
-         <div>
-             <button type="button" class="btn-calculate-savings" onclick="calculateSavings()">Calculate Savings</button>
-         </div>
-     </form>
-     <p id="calculatedTime">0 Month/s</p> <!-- Placeholder for calculated savings -->
- </div>
-        
-
-    </div>
 
         <!-- Modal for Adding Expense -->
         <div id="addExpenseModal" class="modal" style="display:none;">
