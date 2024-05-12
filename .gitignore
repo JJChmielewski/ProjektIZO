@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /IZO/saved/*
+/IZO/savedearnings/5-2024.json
