@@ -202,17 +202,11 @@
                 // Sample data: Earnings are positive, and expenses are negative
                 var labels = "@ViewBag.availableMonths";
                 labels = labels.replaceAll("&quot;", '"')
-                console.log(labels);
                 labels = JSON.parse(labels)
-                console.log(labels);
                 var expenses = "@ViewBag.expensesPerMonth";
-                console.log(expenses);
                 expenses = JSON.parse(expenses)
-                console.log(expenses);
                 var earnings = "@ViewBag.earningsPerMonth";
-                console.log(earnings);
                 earnings = JSON.parse(earnings)
-                console.log(earnings);
 
 
                 var financialData = { // -------------------------------------------------------------TUTAJ SA DANE DLA 5 MIESIECY 
