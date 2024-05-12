@@ -14,6 +14,41 @@ namespace IZO.Controllers
             _logger = logger;
         }
 
+        public IActionResult GeneratePlan(double value)
+        {
+            // The add expense logic now resides here...
+
+            var currentDate = DateTime.Now;
+            var lastDayOfPreviousMonth = new DateTime(currentDate.Year, currentDate.Month, 1).AddDays(-1);
+
+            double expenses = 0;
+            double earnings = 0;
+
+            foreach (var category in ExpenseAccesorService.monthlyExpenses.dayToDayExpenses)
+            {
+                foreach (var expense in category.Value.Where(x => x.Date < lastDayOfPreviousMonth))
+                {
+                    expenses = +expense.moneySpent;
+                }
+            }
+
+            foreach (var category in EarningAccesorService.monthlyEarnings.fixed1Earnings)
+            {
+                foreach (var earning in category.Value.Where(x => x.Date < lastDayOfPreviousMonth))
+                {
+                    earnings = +earning.moneyEarn;
+                }
+            }
+
+
+
+            int months = (int)(value / (earnings - expenses));
+
+            return Json(new { success = true, planedSaving = months });
+
+
+        }
+       
         public IActionResult AddEarning(string type, DateTime date, string category, double value)
         {
             // The add expense logic now resides here...

@@ -62,14 +62,14 @@
                             <button class="btn-add-exp" onclick="openExpenseModal('FIXED')">
                                 <i class="fa fa-plus-square"></i>
                             </button>
-                    
-                        </th> 
+
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var category in ExpenseAccesorService.monthlyExpenses.fixedExpenses)
                     {
-                        @foreach(var expense in category.Value)
+                        @foreach (var expense in category.Value)
                         {
                             <tr>
                                 <td>@expense.Date.ToShortDateString()</td>
@@ -124,14 +124,19 @@
             <!-- placeholder -->
         </div>
 
-    <!-- Charts and other functions -->
+        <!-- Charts and other functions -->
         <div class="remaining-funds">
             <h2>Remaining Funds</h2>
             <p id="remainingFunds">$0.00</p> <!-- Placeholder value -->
         </div>
         <div class="expenses-chart">
             <h2>Expenses Chart</h2>
-            <canvas id="expensesChart"></canvas> 
+            <canvas id="expensesChart"></canvas>
+        </div>
+
+        <div class="earnings-chart">
+            <h2>Earning Chart</h2>
+            <canvas id="earningsChart"></canvas>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -152,8 +157,8 @@
                             datasets: [{
                                 data: amounts,
                                 backgroundColor: [
-                                    '#2c699a', 
-                                    '#048ba8', 
+                                    '#2c699a',
+                                    '#048ba8',
                                     '#00a09f',
                                     '#4ab184',
                                     '#92bc66',
@@ -192,50 +197,50 @@
             <canvas id="expensesGraph"></canvas> <!-- Canvas for another graph representation -->
         </div>
         <div class="saving-calculator">
-     <div class="saving-calculator">
-     <h2>Saving Calculator</h2>
-     <form id="savingCalculatorForm">
-         <div>
-             <label for="plannedAmount">Planned Amount</label>
-             <input type="text" id="plannedAmount" name="plannedAmount" pattern="\d+(\.\d{1,2})?" title="Please enter a valid amount (e.g., 100 or 100.50)" required>
-         </div>
-         <div>
-             <button type="button" class="btn-calculate-savings" onclick="calculateSavings()">Calculate Savings</button>
-         </div>
-     </form>
-     <p id="calculatedTime">0 Month/s</p> <!-- Placeholder for calculated savings -->
- </div>
+            <div class="saving-calculator">
+                <h2>Saving Calculator</h2>
+                <form id="savingCalculatorForm">
+                    <div>
+                        <label for="plannedAmount">Planned Amount</label>
+                        <input type="text" id="plannedAmount" name="plannedAmount" pattern="\d+(\.\d{1,2})?" title="Please enter a valid amount (e.g., 100 or 100.50)" required>
+                    </div>
+                    <div>
+                        <button type="button" class="btn-calculate-savings" onclick="executeGeneratePlan()">Calculate Savings</button>
+                    </div>
+                </form>
+                <p id="calculatedTime">0 Month/s</p> <!-- Placeholder for calculated savings -->
+            </div>
 
-    </div>
-
-    <!-- Modal for Adding Expense -->
-    <div id="addExpenseModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 style="margin-bottom: 20px">Add new expense</h2>
-            <form id="addExpenseForm">
-                <input id= "expenseCategoryField" type="text" value="" hidden/>
-                <div>
-                    <label for="date" style="margin-bottom: 10px">Date:</label>
-                    <input type="date" id="date" name="date" required>
-                </div>
-                <div>
-                    <label for="category" style="margin-bottom: 10px">Category:</label>
-                    <select id="category" name="category">
-                        @foreach (ExpenseCategory category in Enum.GetValues(typeof(ExpenseCategory)))
-                        {
-                            <option value="@category.ToString()">@category</option>
-                        }
-                    </select>
-                </div>
-                <div>
-                    <label for="value" style="margin-bottom: 10px">Amount:</label>
-                    <input type="number" id="value" name="value" step="1" required>
-                </div>
-                <button type="button" class="btn-submit" onclick="submitExpense()">Submit</button>
-            </form>
         </div>
-    </div>
+
+        <!-- Modal for Adding Expense -->
+        <div id="addExpenseModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 style="margin-bottom: 20px">Add new expense</h2>
+                <form id="addExpenseForm">
+                    <input id="expenseCategoryField" type="text" value="" hidden />
+                    <div>
+                        <label for="date" style="margin-bottom: 10px">Date:</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    <div>
+                        <label for="category" style="margin-bottom: 10px">Category:</label>
+                        <select id="category" name="category">
+                            @foreach (ExpenseCategory category in Enum.GetValues(typeof(ExpenseCategory)))
+                            {
+                                <option value="@category.ToString()">@category</option>
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <label for="value" style="margin-bottom: 10px">Amount:</label>
+                        <input type="number" id="value" name="value" step="1" required>
+                    </div>
+                    <button type="button" class="btn-submit" onclick="submitExpense()">Submit</button>
+                </form>
+            </div>
+        </div>
 
         <div id="addEarningModal" class="modal" style="display:none;">
             <div class="modal-content">
@@ -260,7 +265,7 @@
                         <label for="value" style="margin-bottom: 10px">Amount:</label>
                         <input type="number" id="value1" name="value" step="1" required>
                     </div>
-                    <button type="button" class="btn-submit" onclick="submitEarning()">Submit</button>
+                    <button type="button" class="btn-submit" onclick="executeGeneratePlan()">Submit</button>
                 </form>
             </div>
         </div>
@@ -288,6 +293,8 @@
         // Set the date input to today's date
         setTodaysDate();
     }
+
+
 
     // Close the modal when the user clicks anywhere outside of it
     window.onclick = function (event) {
@@ -321,6 +328,33 @@
             },
             error: function () {
                 alert('Error adding expense');
+            }
+        });
+    }
+
+
+    function executeGeneratePlan() {
+        var plannedAmount = $('#plannedAmount').val(); // Get planned amount from input field
+        $.ajax({
+            url: '/Earning/GeneratePlan', // Endpoint URL
+            type: 'GET', // HTTP method
+            dataType: 'json', // Expected data type
+            data: { value: plannedAmount }, // Data to send
+            success: function (response) { // Success callback function
+                if (response.success) {
+                    // Update calculated savings in the <p> element
+                    console.log(response.planedSaving);
+                    $('#calculatedTime').text(response.planedSaving + " Month/s");
+                } else {
+                    console.error("Failed to generate plan: " + response.message);
+                    // Handle failure
+                    // You can add further handling here, such as displaying an error message
+                }
+            },
+            error: function (xhr, status, error) { // Error callback function
+                console.error("Error occurred while generating plan: " + error);
+                // Handle error
+                // You can add further handling here, such as displaying an error message
             }
         });
     }
