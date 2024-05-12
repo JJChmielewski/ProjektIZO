@@ -83,6 +83,8 @@ namespace IZO.Controllers
 
                 EarningAccesorService.saveEarnings(); // Corrected from saveExpenses to saveEarnings
 
+                EarningAccesorService.saveEarnings(); // Corrected from saveExpenses to saveEarnings
+
                 return Json(new { success = true });
             }
 
