@@ -265,9 +265,22 @@
                         <label for="value" style="margin-bottom: 10px">Amount:</label>
                         <input type="number" id="value1" name="value" step="1" required>
                     </div>
-                    <button type="button" class="btn-submit" onclick="executeGeneratePlan()">Submit</button>
+                    <button type="button" class="btn-submit" onclick="submitEarning()">Submit</button>
                 </form>
             </div>
+        </div>
+        <div class="saving-calculator">
+            <h2>Saving Calculator</h2>
+            <form id="savingCalculatorForm">
+                <div>
+                    <label for="plannedAmount">Planned Amount</label>
+                    <input type="text" id="plannedAmount" name="plannedAmount" pattern="\d+(\.\d{1,2})?" title="Please enter a valid amount (e.g., 100 or 100.50)" required>
+                </div>
+                <div>
+                    <button type="button" class="btn-calculate-savings" onclick="calculateSavings()">Calculate Savings</button>
+                </div>
+            </form>
+            <p id="calculatedTime">0 Month/s</p> <!-- Placeholder for calculated savings -->
         </div>
 </body>
 </html>
@@ -300,7 +313,7 @@
     window.onclick = function (event) {
         if (event.target == modal) {
             modalExpense.style.display = "none";
-            modalEarning.style.display = "none";
+          modalEarning.style.display = "none";
         }
     }
 

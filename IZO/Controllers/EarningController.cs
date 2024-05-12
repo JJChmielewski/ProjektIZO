@@ -43,6 +43,7 @@ namespace IZO.Controllers
 
 
             int months = (int)(value / (earnings - expenses));
+            if (months < 0) { return Json(new { success = true, planedSaving = 99999 }); }
 
             return Json(new { success = true, planedSaving = months });
 
