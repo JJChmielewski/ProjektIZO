@@ -200,13 +200,28 @@
 
             document.addEventListener('DOMContentLoaded', function () {
                 // Sample data: Earnings are positive, and expenses are negative
+                var labels = "@ViewBag.availableMonths";
+                labels = labels.replaceAll("&quot;", '"')
+                console.log(labels);
+                labels = JSON.parse(labels)
+                console.log(labels);
+                var expenses = "@ViewBag.expensesPerMonth";
+                console.log(expenses);
+                expenses = JSON.parse(expenses)
+                console.log(expenses);
+                var earnings = "@ViewBag.earningsPerMonth";
+                console.log(earnings);
+                earnings = JSON.parse(earnings)
+                console.log(earnings);
+
+
                 var financialData = { // -------------------------------------------------------------TUTAJ SA DANE DLA 5 MIESIECY 
-                    labels: ["January", "February", "March", "April", "May"], // Example months
+                    labels: labels, // Example months
                     
                     datasets: [
                         {
                             label: 'Earnings',
-                            data: [1200, 1400, 1300, 1500, 1600], // ----------------SAMPLE DATA
+                            data: earnings, // ----------------SAMPLE DATA
                             backgroundColor: 'rgba(54, 162, 235, 0.6)', // Blue
                             borderColor: 'rgba(54, 162, 235, 1)',
                             borderWidth: 1,
@@ -215,7 +230,7 @@
                         },
                         {
                             label: 'Expenses',
-                            data: [-800, -700, -900, -500, -1100], // ---------------SAMPLE DATA
+                            data: expenses, // ---------------SAMPLE DATA
                             backgroundColor: 'rgba(255, 99, 132, 0.6)', // Red
                             borderColor: 'rgba(255, 99, 132, 1)',
                             borderWidth: 1,
