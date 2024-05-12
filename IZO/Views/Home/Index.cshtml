@@ -16,42 +16,8 @@
 </head>
 <body>
     <div class="layout">
-        <div class="fixed1-earning-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Category</th>
-                        <th>Amount Spent</th>
-                        <th>
-                            <button class="btn-add-ear" onclick="openEarningModal('FIXED1')">
-                                <i class="fa fa-plus-square"></i>
-                            </button>
-
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var category in EarningAccesorService.monthlyEarnings.fixed1Earnings)
-                    {
-                        @foreach (var earning in category.Value)
-                        {
-                            <tr>
-                                <td>@earning.Date.ToShortDateString()</td>
-                                <td>@category.Key.ToString()</td>
-                                <td>@earning.moneyEarn.ToString("C")</td>
-                                <td>
-                                    <button class="btn-del-exp" onclick="deleteExpense('@earning.Date', '@earning.category', '@earning.moneyEarn', 'FIXED1')">
-                                        <i class="fa fa-trash-o"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
         <div class="fixed-expenses-table">
+            <h2>Monthly expenses</h2>
             <table>
                 <thead>
                     <tr>
@@ -62,14 +28,14 @@
                             <button class="btn-add-exp" onclick="openExpenseModal('FIXED')">
                                 <i class="fa fa-plus-square"></i>
                             </button>
-
-                        </th>
+                    
+                        </th> 
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var category in ExpenseAccesorService.monthlyExpenses.fixedExpenses)
                     {
-                        @foreach (var expense in category.Value)
+                        @foreach(var expense in category.Value)
                         {
                             <tr>
                                 <td>@expense.Date.ToShortDateString()</td>
@@ -87,6 +53,7 @@
             </table>
         </div>
         <div class="d2d-expenses-table">
+            <h2>Day-2-day expenses</h2>
             <table>
                 <thead>
                     <tr>
@@ -120,8 +87,41 @@
                 </tbody>
             </table>
         </div>
-        <div>
-            <!-- placeholder -->
+        <div class="fixed1-earning-table">
+            <h2>Income</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount Spent</th>
+                        <th>
+                            <button class="btn-add-ear" onclick="openEarningModal('FIXED1')">
+                                <i class="fa fa-plus-square"></i>
+                            </button>
+
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in EarningAccesorService.monthlyEarnings.fixed1Earnings)
+                    {
+                        @foreach (var earning in category.Value)
+                        {
+                            <tr>
+                                <td>@earning.Date.ToShortDateString()</td>
+                                <td>@category.Key.ToString()</td>
+                                <td>@earning.moneyEarn.ToString("C")</td>
+                                <td>
+                                    <button class="btn-del-exp" onclick="deleteEarning('@earning.Date', '@earning.category', '@earning.moneyEarn', 'FIXED1')">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
 
         <!-- Charts and other functions -->
@@ -189,11 +189,13 @@
 
                 createPieChart(pieChartData);
             });
+
+
         </script>
 
 
         <div class="expenses-graph">
-            <h2>Expenses Graph</h2>
+            <h2>Financial Overview</h2>
             <canvas id="expensesGraph"></canvas> <!-- Canvas for another graph representation -->
         </div>
         <div class="saving-calculator">
@@ -265,7 +267,7 @@
                         <label for="value" style="margin-bottom: 10px">Amount:</label>
                         <input type="number" id="value1" name="value" step="1" required>
                     </div>
-                    <button type="button" class="btn-submit" onclick="executeGeneratePlan()">Submit</button>
+                    <button type="button" class="btn-submit" onclick="submitEarning()">Submit</button>
                 </form>
             </div>
         </div>
@@ -276,7 +278,7 @@
     // Get the modal
     var modalExpense = document.getElementById("addExpenseModal");
     var modalEarning = document.getElementById("addEarningModal");
-    var closeButton = document.getElementsByClassName("close")[0];
+    var closeButtons = document.getElementsByClassName("close");
 
     // Function to open modal
     function openExpenseModal(type) {
@@ -295,23 +297,23 @@
     }
 
 
-
-    // Close the modal when the user clicks anywhere outside of it
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modalExpense.style.display = "none";
-            modalEarning.style.display = "none";
-        }
-    }
-
-    closeButton.onclick = function () {
+    closeButtons[0].onclick = function () {
         modalExpense.style.display = "none";
         modalEarning.style.display = "none";
-    };
+    }
+
+    closeButtons[1].onclick = function () {
+        modalExpense.style.display = "none";
+        modalEarning.style.display = "none";
+    }
 
     // Function to submit the expense form
     function submitExpense() {
-        var date = document.getElementById('date').value;
+        var date = document.getElementById('date').value;window.onclick = function (event) {
+        if (event.target == modalExpense) {
+            modalExpense.style.display = "none";
+        }
+    }
         var category = document.getElementById('category').value;
         var value = document.getElementById('value').value;
         var type = document.getElementById('expenseCategoryField').value;
@@ -390,6 +392,7 @@
 
         today = yyyy + '-' + mm + '-' + dd;
         document.getElementById('date').value = today;
+        document.getElementById('date1').value = today;
     }
 
     // Optionally, set the date when the page loads
@@ -403,8 +406,20 @@
             type: 'POST',
             data: { type: type, date: date, category: category, value: value },
             success: function (response) {
-                // Close the modal
-                modal.style.display = "none";
+                window.location.reload();
+            },
+            error: function () {
+                alert('Error deleting expense');
+            }
+        });
+    }
+
+    function deleteEarning(date, category, value, type) {
+        $.ajax({
+            url: '@Url.Action("DeleteEarning", "Earning")', // Controller/Action path
+            type: 'POST',
+            data: { type: type, date: date, category: category, value: value },
+            success: function (response) {
                 window.location.reload();
             },
             error: function () {

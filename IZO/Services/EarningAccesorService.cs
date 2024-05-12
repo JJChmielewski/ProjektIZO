@@ -8,7 +8,7 @@ namespace IZO.Services
         public static string pathToSavedDir = "savedearnings/";
         public static MonthlyEarnings monthlyEarnings = loadEarnings(getCurrentFilePath());
 
-        public static void saveExpenses()
+        public static void saveEarnings()
         {
             string file = getCurrentFilePath();
             if (!Directory.Exists(pathToSavedDir))

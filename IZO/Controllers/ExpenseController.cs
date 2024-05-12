@@ -74,7 +74,7 @@ namespace IZO.Controllers
                         if (ExpenseAccesorService.monthlyExpenses.fixedExpenses.ContainsKey(expenseCategory))
                         {
                             List<Expense> expenses = ExpenseAccesorService.monthlyExpenses.fixedExpenses[expenseCategory].ToList();
-                            expenses.Remove(expenses.Single( expense => expense.category == expenseCategory && expense.moneySpent == value && expense.Date == date));
+                            expenses.Remove(expenses.First( expense => expense.category == expenseCategory && expense.moneySpent == value && expense.Date == date));
                             ExpenseAccesorService.monthlyExpenses.fixedExpenses[expenseCategory] = expenses.ToArray();
                         }
                         break;
@@ -82,7 +82,7 @@ namespace IZO.Controllers
                         if (ExpenseAccesorService.monthlyExpenses.dayToDayExpenses.ContainsKey(expenseCategory))
                         {
                             List<Expense> expenses = ExpenseAccesorService.monthlyExpenses.dayToDayExpenses[expenseCategory].ToList();
-                            expenses.Remove(expenses.Single(expense => expense.category == expenseCategory && expense.moneySpent == value && expense.Date == date));
+                            expenses.Remove(expenses.First(expense => expense.category == expenseCategory && expense.moneySpent == value && expense.Date == date));
                             ExpenseAccesorService.monthlyExpenses.dayToDayExpenses[expenseCategory] = expenses.ToArray();
                         }
                         break;

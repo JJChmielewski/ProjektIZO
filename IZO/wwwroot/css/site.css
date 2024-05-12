@@ -254,6 +254,25 @@ input[type="number"] {
 d2d-expenses-table {
 
 }
+/*--------------------------- INCOME ---------------------------------*/
+.btn-add-ear {
+    background-color: transparent; /* Green background color */
+    border: none; /* Remove border */
+    color: white; /* Text color */
+    padding: 3px 8px; /* Padding */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
+    font-size: 18px;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    transition: background-color 0.8s ease; /* Smooth transition on hover */
+}
+
+.btn-add-ear:hover {
+    padding: 3px 8px; /* Padding */
+    background-color: #45a049; /* Darker green on hover */
+}
 
 /*---------------------------REMAINING FUNDS---------------------------*/
 .remaining-funds {
