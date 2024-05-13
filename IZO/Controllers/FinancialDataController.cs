@@ -11,13 +11,12 @@ namespace IZO.Controllers
         [HttpGet("GetFinancialData")]
         public IActionResult GetFinancialData()
         {
-            var earnings = EarningAccesorService.monthlyEarnings;
             var expenses = ExpenseAccesorService.monthlyExpenses;
 
-            var earningsData = earnings.fixed1Earnings
+            var earningsData = expenses.earnings
                 .SelectMany(e => e.Value)
                 .GroupBy(e => e.Date.ToString("MMMM"))
-                .Select(g => new { Month = g.Key, Total = g.Sum(i => i.moneyEarn) });
+                .Select(g => new { Month = g.Key, Total = g.Sum(i => i.moneySpent) });
 
             var expensesData = expenses.fixedExpenses
                 .Concat(expenses.dayToDayExpenses)

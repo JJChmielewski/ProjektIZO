@@ -52,6 +52,16 @@ namespace IZO.Controllers
                         }
                         ExpenseAccesorService.monthlyExpenses.dayToDayExpenses.Add(newExpense.category, new Expense[] { newExpense });
                         break;
+                    case "EARNING":
+                        if (ExpenseAccesorService.monthlyExpenses.earnings.ContainsKey(newExpense.category))
+                        {
+                            List<Expense> expenses = ExpenseAccesorService.monthlyExpenses.earnings[newExpense.category].ToList();
+                            expenses.Add(newExpense);
+                            ExpenseAccesorService.monthlyExpenses.earnings[newExpense.category] = expenses.ToArray();
+                            break;
+                        }
+                        ExpenseAccesorService.monthlyExpenses.earnings.Add(newExpense.category, new Expense[] { newExpense });
+                        break;
 
                 }
                 ExpenseAccesorService.saveExpenses();
@@ -86,6 +96,14 @@ namespace IZO.Controllers
                             ExpenseAccesorService.monthlyExpenses.dayToDayExpenses[expenseCategory] = expenses.ToArray();
                         }
                         break;
+                    case "EARNING":
+                        if (ExpenseAccesorService.monthlyExpenses.earnings.ContainsKey(expenseCategory))
+                        {
+                            List<Expense> expenses = ExpenseAccesorService.monthlyExpenses.earnings[expenseCategory].ToList();
+                            expenses.Remove(expenses.First(expense => expense.category == expenseCategory && expense.moneySpent == value && expense.Date == date));
+                            ExpenseAccesorService.monthlyExpenses.earnings[expenseCategory] = expenses.ToArray();
+                        }
+                        break;
 
                 }
                 ExpenseAccesorService.saveExpenses();
@@ -94,6 +112,47 @@ namespace IZO.Controllers
             }
 
             return Json(new { success = false, message = "Invalid category." });
+        }
+
+        public IActionResult GeneratePlan(double value)
+        {
+
+            var currentDate = DateTime.Now;
+
+            double expenses = 0;
+            double earnings = 0;
+
+            foreach (var expense in ExpenseAccesorService.monthlyExpenses.fixedExpenses.Values)
+            {
+                expenses += expense.Sum(e => e.moneySpent);
+            }
+
+            foreach (var expense in ExpenseAccesorService.monthlyExpenses.dayToDayExpenses.Values)
+            {
+                expenses += expense.Sum(e => e.moneySpent);
+            }
+
+            foreach (var earning in ExpenseAccesorService.monthlyExpenses.earnings.Values)
+            {
+                earnings += earning.Sum(e => e.moneySpent);
+            }
+
+            var failJson = Json(new { success = true, planedSaving = 99999 });
+
+            if (earnings - expenses < 0)
+            {
+                return failJson;
+            }
+
+            int months = (int)(value / (earnings - expenses));
+
+            if (months < 0) {
+                return failJson;
+            }
+
+            return Json(new { success = true, planedSaving = months });
+
+
         }
     }
 }

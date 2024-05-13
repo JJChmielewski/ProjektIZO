@@ -1,5 +1,4 @@
-﻿@using IZO.Models.Earnings
-@using IZO.Models.Expenses
+﻿@using IZO.Models.Expenses
 @using IZO.Models.Charts
 @using IZO.Services
 @model IZO.Models.ViewModels.ExpensesViewModel
@@ -96,7 +95,7 @@
                         <th>Category</th>
                         <th>Amount Spent</th>
                         <th>
-                            <button class="btn-add-ear" onclick="openEarningModal('FIXED1')">
+                            <button class="btn-add-ear" onclick="openExpenseModal('EARNING')">
                                 <i class="fa fa-plus-square"></i>
                             </button>
 
@@ -104,16 +103,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var category in EarningAccesorService.monthlyEarnings.fixed1Earnings)
+                    @foreach (var category in ExpenseAccesorService.monthlyExpenses.earnings)
                     {
                         @foreach (var earning in category.Value)
                         {
                             <tr>
                                 <td>@earning.Date.ToShortDateString()</td>
                                 <td>@category.Key.ToString()</td>
-                                <td>@earning.moneyEarn.ToString("C")</td>
+                                <td>@earning.moneySpent.ToString("C")</td>
                                 <td>
-                                    <button class="btn-del-exp" onclick="deleteEarning('@earning.Date', '@earning.category', '@earning.moneyEarn', 'FIXED1')">
+                                    <button class="btn-del-exp" onclick="deleteEarning('@earning.Date', '@earning.category', '@earning.moneySpent', 'EARNING')">
                                         <i class="fa fa-trash-o"></i>
                                     </button>
                                 </td>
@@ -317,42 +316,13 @@
                 </form>
             </div>
         </div>
-
-        <div id="addEarningModal" class="modal" style="display:none;">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2 style="margin-bottom: 20px">Add new earning</h2>
-                <form id="addEarningForm">
-                    <input id="earningCategoryField" type="text" value="" hidden />
-                    <div>
-                        <label for="date" style="margin-bottom: 10px">Date:</label>
-                        <input type="date" id="date1" name="date" required>
-                    </div>
-                    <div>
-                        <label for="category" style="margin-bottom: 10px">Category:</label>
-                        <select id="category1" name="category">
-                            @foreach (EarningCategory category in Enum.GetValues(typeof(EarningCategory)))
-                            {
-                                <option value="@category.ToString()">@category</option>
-                            }
-                        </select>
-                    </div>
-                    <div>
-                        <label for="value" style="margin-bottom: 10px">Amount:</label>
-                        <input type="number" id="value1" name="value" step="1" required>
-                    </div>
-                    <button type="button" class="btn-submit" onclick="submitEarning()">Submit</button>
-                </form>
-            </div>
-        </div>
 </body>
 </html>
 
 <script>
     // Get the modal
     var modalExpense = document.getElementById("addExpenseModal");
-    var modalEarning = document.getElementById("addEarningModal");
-    var closeButtons = document.getElementsByClassName("close");
+    var closeButton = document.getElementsByClassName("close")[0];
 
     // Function to open modal
     function openExpenseModal(type) {
@@ -362,23 +332,10 @@
         // Set the date input to today's date
         setTodaysDate();
     }
-    function openEarningModal(type) {
-        modalEarning.style.display = "block";
-        var typeField = document.getElementById("earningCategoryField")
-        typeField.value = type
-        // Set the date input to today's date
-        setTodaysDate();
-    }
 
 
-    closeButtons[0].onclick = function () {
+    closeButton.onclick = function () {
         modalExpense.style.display = "none";
-        modalEarning.style.display = "none";
-    }
-
-    closeButtons[1].onclick = function () {
-        modalExpense.style.display = "none";
-        modalEarning.style.display = "none";
     }
 
     // Function to submit the expense form
@@ -412,7 +369,7 @@
     function executeGeneratePlan() {
         var plannedAmount = $('#plannedAmount').val(); // Get planned amount from input field
         $.ajax({
-            url: '/Earning/GeneratePlan', // Endpoint URL
+            url: '/Expense/GeneratePlan', // Endpoint URL
             type: 'GET', // HTTP method
             dataType: 'json', // Expected data type
             data: { value: plannedAmount }, // Data to send
@@ -435,28 +392,6 @@
         });
     }
 
-    function submitEarning() {
-        var date = document.getElementById('date1').value;
-        var category = document.getElementById('category1').value;
-        var value = document.getElementById('value1').value;
-        var type = document.getElementById('earningCategoryField').value;
-
-        // AJAX request
-        $.ajax({
-            url: '@Url.Action("AddEarning", "Earning")', // Controller/Action path
-            type: 'POST',
-            data: { type: type, date: date, category: category, value: value },
-            success: function (response) {
-                // Close the modal
-                modalEarning.style.display = "none";
-                window.location.reload();
-            },
-            error: function () {
-                alert('Error adding earning');
-            }
-        });
-    }
-
     // Function to set the date input to today's date
     function setTodaysDate() {
         var today = new Date();
@@ -466,7 +401,6 @@
 
         today = yyyy + '-' + mm + '-' + dd;
         document.getElementById('date').value = today;
-        document.getElementById('date1').value = today;
     }
 
     // Optionally, set the date when the page loads
@@ -477,20 +411,6 @@
     function deleteExpense(date, category, value, type) {
         $.ajax({
             url: '@Url.Action("DeleteExpense", "Expense")', // Controller/Action path
-            type: 'POST',
-            data: { type: type, date: date, category: category, value: value },
-            success: function (response) {
-                window.location.reload();
-            },
-            error: function () {
-                alert('Error deleting expense');
-            }
-        });
-    }
-
-    function deleteEarning(date, category, value, type) {
-        $.ajax({
-            url: '@Url.Action("DeleteEarning", "Earning")', // Controller/Action path
             type: 'POST',
             data: { type: type, date: date, category: category, value: value },
             success: function (response) {

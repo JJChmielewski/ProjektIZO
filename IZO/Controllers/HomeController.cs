@@ -38,6 +38,7 @@ namespace IZO.Controllers
             {
                 var temp = ExpenseAccesorService.loadExpenses(file);
                 double sum = 0;
+                double earningsSum = 0;
                 string month = file.Replace(".json", "").Replace(ExpenseAccesorService.pathToSavedDir, "");
                 if (!availableMonths.Contains(month))
                 {
@@ -53,29 +54,13 @@ namespace IZO.Controllers
                 {
                     sum += -1 * expense.Sum(e => e.moneySpent);
                 }
+
+                foreach (var expense in temp.earnings.Values)
+                {
+                    earningsSum += expense.Sum(e => e.moneySpent);
+                }
                 expensesPerMonth.Add(sum);
-            }
-
-            foreach (string file in Directory.GetFiles(EarningAccesorService.pathToSavedDir))
-            {
-                var temp = EarningAccesorService.loadEarnings(file);
-                double sum = 0;
-                string month = file.Replace(".json", "").Replace(EarningAccesorService.pathToSavedDir, "");
-                if (!availableMonths.Contains(month))
-                {
-                    availableMonths.Add(month);
-                }
-
-                foreach (var expense in temp.dayToDayEarnings.Values)
-                {
-                    sum += expense.Sum(e => e.moneyEarn);
-                }
-
-                foreach (var expense in temp.fixed1Earnings.Values)
-                {
-                    sum += expense.Sum(e => e.moneyEarn);
-                }
-                earningsPerMonth.Add(sum);
+                earningsPerMonth.Add(earningsSum);
             }
 
             ViewBag.availableMonths = JsonSerializer.Serialize(availableMonths);
