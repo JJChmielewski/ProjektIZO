@@ -1,5 +1,4 @@
-﻿@using IZO.Models.Earnings
-@using IZO.Models.Expenses
+﻿@using IZO.Models.Expenses
 @using IZO.Models.Charts
 @using IZO.Services
 @model IZO.Models.ViewModels.ExpensesViewModel
@@ -96,7 +95,7 @@
                         <th>Category</th>
                         <th>Amount Spent</th>
                         <th>
-                            <button class="btn-add-ear" onclick="openEarningModal('FIXED1')">
+                            <button class="btn-add-ear" onclick="openExpenseModal('EARNING')">
                                 <i class="fa fa-plus-square"></i>
                             </button>
 
@@ -104,16 +103,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var category in EarningAccesorService.monthlyEarnings.fixed1Earnings)
+                    @foreach (var category in ExpenseAccesorService.monthlyExpenses.earnings)
                     {
                         @foreach (var earning in category.Value)
                         {
                             <tr>
                                 <td>@earning.Date.ToShortDateString()</td>
                                 <td>@category.Key.ToString()</td>
-                                <td>@earning.moneyEarn.ToString("C")</td>
+                                <td>@earning.moneySpent.ToString("C")</td>
                                 <td>
-                                    <button class="btn-del-exp" onclick="deleteExpense('@earning.Date', '@earning.category', '@earning.moneyEarn', 'FIXED1')">
+                                    <button class="btn-del-exp" onclick="deleteExpense('@earning.Date', '@earning.category', '@earning.moneySpent', 'EARNING')">
                                         <i class="fa fa-trash-o"></i>
                                     </button>
                                 </td>
@@ -124,14 +123,9 @@
             </table>
         </div>
 
-    <!-- Charts and other functions -->
-        <div class="remaining-funds">
-            <h2>Remaining Funds</h2>
-            <p id="remainingFunds">$0.00</p> <!-- Placeholder value -->
-        </div>
         <div class="expenses-chart">
             <h2>Expenses Chart</h2>
-            <canvas id="expensesChart"></canvas> 
+            <canvas id="expensesChart"></canvas>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -152,8 +146,8 @@
                             datasets: [{
                                 data: amounts,
                                 backgroundColor: [
-                                    '#2c699a', 
-                                    '#048ba8', 
+                                    '#2c699a',
+                                    '#048ba8',
                                     '#00a09f',
                                     '#4ab184',
                                     '#92bc66',
@@ -192,6 +186,22 @@
         <div class="expenses-graph">
             <h2>Financial Overview</h2>
             <canvas id="expensesGraph"></canvas> <!-- Canvas for another graph representation -->
+        </div>
+        <div class="saving-calculator">
+            <div class="saving-calculator">
+                <h2>Saving Calculator</h2>
+                <form id="savingCalculatorForm">
+                    <div>
+                        <label for="plannedAmount">Planned Amount</label><br/>
+                        <input type="number" id="plannedAmount" name="plannedAmount" pattern="\d+(\.\d{1,2})?" title="Please enter a valid amount (e.g., 100 or 100.50)" required>
+                    </div>
+                    <div>
+                        <button type="button" class="btn-calculate-savings" onclick="executeGeneratePlan()">Calculate Savings</button>
+                    </div>
+                </form>
+                <p id="calculatedTime">0 Month/s</p> <!-- Placeholder for calculated savings -->
+            </div>
+
         </div>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -277,69 +287,22 @@
                 createFinancialChart(financialData);
             });
         </script>
-       
 
-     <div class="saving-calculator">
-     <div class="saving-calculator">
-     <h2>Saving Calculator</h2>
-     <form id="savingCalculatorForm">
-         <div>
-             <label for="plannedAmount">Planned Amount</label>
-             <input type="text" id="plannedAmount" name="plannedAmount" pattern="\d+(\.\d{1,2})?" title="Please enter a valid amount (e.g., 100 or 100.50)" required>
-         </div>
-         <div>
-             <button type="button" class="btn-calculate-savings" onclick="calculateSavings()">Calculate Savings</button>
-         </div>
-     </form>
-     <p id="calculatedTime">0 Month/s</p> <!-- Placeholder for calculated savings -->
- </div>
-        
-
-    </div>
-
-    <!-- Modal for Adding Expense -->
-    <div id="addExpenseModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 style="margin-bottom: 20px">Add new expense</h2>
-            <form id="addExpenseForm">
-                <input id= "expenseCategoryField" type="text" value="" hidden/>
-                <div>
-                    <label for="date" style="margin-bottom: 10px">Date:</label>
-                    <input type="date" id="date" name="date" required>
-                </div>
-                <div>
-                    <label for="category" style="margin-bottom: 10px">Category:</label>
-                    <select id="category" name="category">
-                        @foreach (ExpenseCategory category in Enum.GetValues(typeof(ExpenseCategory)))
-                        {
-                            <option value="@category.ToString()">@category</option>
-                        }
-                    </select>
-                </div>
-                <div>
-                    <label for="value" style="margin-bottom: 10px">Amount:</label>
-                    <input type="number" id="value" name="value" step="1" required>
-                </div>
-                <button type="button" class="btn-submit" onclick="submitExpense()">Submit</button>
-            </form>
-        </div>
-    </div>
-
-        <div id="addEarningModal" class="modal" style="display:none;">
+        <!-- Modal for Adding Expense -->
+        <div id="addExpenseModal" class="modal" style="display:none;">
             <div class="modal-content">
                 <span class="close">&times;</span>
-                <h2 style="margin-bottom: 20px">Add new earning</h2>
-                <form id="addEarningForm">
-                    <input id="earningCategoryField" type="text" value="" hidden />
+                <h2 style="margin-bottom: 20px">Add new expense</h2>
+                <form id="addExpenseForm">
+                    <input id="expenseCategoryField" type="text" value="" hidden />
                     <div>
                         <label for="date" style="margin-bottom: 10px">Date:</label>
-                        <input type="date" id="date1" name="date" required>
+                        <input type="date" id="date" name="date" required>
                     </div>
                     <div>
                         <label for="category" style="margin-bottom: 10px">Category:</label>
-                        <select id="category1" name="category">
-                            @foreach (EarningCategory category in Enum.GetValues(typeof(EarningCategory)))
+                        <select id="category" name="category">
+                            @foreach (ExpenseCategory category in Enum.GetValues(typeof(ExpenseCategory)))
                             {
                                 <option value="@category.ToString()">@category</option>
                             }
@@ -347,9 +310,9 @@
                     </div>
                     <div>
                         <label for="value" style="margin-bottom: 10px">Amount:</label>
-                        <input type="number" id="value1" name="value" step="1" required>
+                        <input type="number" id="value" name="value" step="1" required>
                     </div>
-                    <button type="button" class="btn-submit" onclick="submitEarning()">Submit</button>
+                    <button type="button" class="btn-submit" onclick="submitExpense()">Submit</button>
                 </form>
             </div>
         </div>
@@ -359,7 +322,6 @@
 <script>
     // Get the modal
     var modalExpense = document.getElementById("addExpenseModal");
-    var modalEarning = document.getElementById("addEarningModal");
     var closeButton = document.getElementsByClassName("close")[0];
 
     // Function to open modal
@@ -370,30 +332,19 @@
         // Set the date input to today's date
         setTodaysDate();
     }
-    function openEarningModal(type) {
-        modalEarning.style.display = "block";
-        var typeField = document.getElementById("earningCategoryField")
-        typeField.value = type
-        // Set the date input to today's date
-        setTodaysDate();
-    }
 
-    // Close the modal when the user clicks anywhere outside of it
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modalExpense.style.display = "none";
-            modalEarning.style.display = "none";
-        }
-    }
 
     closeButton.onclick = function () {
         modalExpense.style.display = "none";
-        modalEarning.style.display = "none";
-    };
+    }
 
     // Function to submit the expense form
     function submitExpense() {
-        var date = document.getElementById('date').value;
+        var date = document.getElementById('date').value;window.onclick = function (event) {
+        if (event.target == modalExpense) {
+            modalExpense.style.display = "none";
+        }
+    }
         var category = document.getElementById('category').value;
         var value = document.getElementById('value').value;
         var type = document.getElementById('expenseCategoryField').value;
@@ -414,24 +365,29 @@
         });
     }
 
-    function submitEarning() {
-        var date = document.getElementById('date1').value;
-        var category = document.getElementById('category1').value;
-        var value = document.getElementById('value1').value;
-        var type = document.getElementById('earningCategoryField').value;
 
-        // AJAX request
+    function executeGeneratePlan() {
+        var plannedAmount = $('#plannedAmount').val(); // Get planned amount from input field
         $.ajax({
-            url: '@Url.Action("AddEarning", "Earning")', // Controller/Action path
-            type: 'POST',
-            data: { type: type, date: date, category: category, value: value },
-            success: function (response) {
-                // Close the modal
-                modalEarning.style.display = "none";
-                window.location.reload();
+            url: '/Expense/GeneratePlan', // Endpoint URL
+            type: 'GET', // HTTP method
+            dataType: 'json', // Expected data type
+            data: { value: plannedAmount }, // Data to send
+            success: function (response) { // Success callback function
+                if (response.success) {
+                    // Update calculated savings in the <p> element
+                    console.log(response.planedSaving);
+                    $('#calculatedTime').text(response.planedSaving + " Month/s");
+                } else {
+                    console.error("Failed to generate plan: " + response.message);
+                    // Handle failure
+                    // You can add further handling here, such as displaying an error message
+                }
             },
-            error: function () {
-                alert('Error adding earning');
+            error: function (xhr, status, error) { // Error callback function
+                console.error("Error occurred while generating plan: " + error);
+                // Handle error
+                // You can add further handling here, such as displaying an error message
             }
         });
     }
@@ -458,8 +414,6 @@
             type: 'POST',
             data: { type: type, date: date, category: category, value: value },
             success: function (response) {
-                // Close the modal
-                modal.style.display = "none";
                 window.location.reload();
             },
             error: function () {

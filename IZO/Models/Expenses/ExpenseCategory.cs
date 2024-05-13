@@ -10,6 +10,8 @@
         GROCERIES, 
         HEALTH, 
         GASTRONOMY, 
-        ENTERTAINMENT, 
+        ENTERTAINMENT,
+        EMPLOYMENT,
+        FREELANCING,
     }
 }

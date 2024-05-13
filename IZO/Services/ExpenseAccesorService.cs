@@ -38,7 +38,13 @@ namespace IZO.Services
             }
 
             tempExpenses = new MonthlyExpenses();
-            tempExpenses.fixedExpenses = getPastFixedExpenses();
+            var oldFile = getPastExpenses();
+            if (oldFile != null)
+            {
+                tempExpenses.fixedExpenses = oldFile.fixedExpenses;
+                tempExpenses.earnings.Add(ExpenseCategory.EMPLOYMENT, oldFile.earnings[ExpenseCategory.EMPLOYMENT]);
+            }
+            
             return tempExpenses;
         }
 
@@ -49,7 +55,7 @@ namespace IZO.Services
             return Path.Combine(pathToSavedDir, String.Format("{0}-{1}.json", month, year));
         }
 
-        private static Dictionary<ExpenseCategory, Expense[]> getPastFixedExpenses()
+        private static MonthlyExpenses getPastExpenses()
         {
             if (Directory.Exists(pathToSavedDir))
             {
@@ -81,11 +87,11 @@ namespace IZO.Services
 
                 if (newest != null)
                 {
-                    return loadExpenses(newest).fixedExpenses;
+                    return loadExpenses(newest);
                 }
             }
 
-            return new Dictionary<ExpenseCategory, Expense[]>();
+            return null;
         }
 
     }
